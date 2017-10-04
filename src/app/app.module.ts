@@ -4,7 +4,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { DialogModule, InputTextModule, ButtonModule, BlockUIModule, PanelModule } from 'primeng/primeng';
+import { DialogModule, InputTextModule, ButtonModule, PanelModule, MessagesModule } from 'primeng/primeng';
+import { MessageService } from 'primeng/components/common/messageservice';
 
 import { AppComponent } from './app.component';
 
@@ -14,18 +15,18 @@ import { AppComponent } from './app.component';
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
+    ReactiveFormsModule,
+    FormsModule,
+
     DialogModule,
     InputTextModule,
     ButtonModule,
-    BrowserAnimationsModule,
     HttpClientModule,
-
     PanelModule,
-    BlockUIModule,
-    FormsModule,
-    ReactiveFormsModule
+    MessagesModule
   ],
-  providers: [],
+  providers: [MessageService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

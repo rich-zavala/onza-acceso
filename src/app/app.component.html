@@ -1,6 +1,6 @@
-<form [formGroup]="form" (ngSubmit)="login($event)">
-  <p-dialog [(visible)]="form" [draggable]="false" [closeOnEscape]="false" [dismissableMask]="false" [closable]="false" [positionTop]="150"
-    width="600">
+<form [formGroup]="form" (ngSubmit)="login($event)" [class.show]="!accesoConcedido" class="step">
+  <p-dialog [(visible)]="form" [modal]="true" [draggable]="false" [closeOnEscape]="false" [dismissableMask]="false" [closable]="false"
+    [positionTop]="150" width="600">
     <p-header>
       Acceso al portal de gestión de contenido
     </p-header>
@@ -18,13 +18,11 @@
           <label for="password">Contraseña</label>
         </span>
       </div>
-      <div class="alert alert-success" *ngIf="accesoCorrecto"><i class="fa fa-check"></i> Accesso correcto</div>
-      <div class="alert alert-info" *ngIf="verificando"><i class="fa fa-spinner fa-spin"></i> Verificando claves de accesso...</div>
-      <div class="alert alert-danger" *ngIf="clavesInvalidas"><i class="fa fa-warning"></i> Las claves de acceso no son válidas</div>
-      <div class="alert alert-danger" *ngIf="error"><i class="fa fa-danger"></i> Ha ocurrido un error. Intente de nuevo más tarde.</div>
+
+      <p-messages [(value)]="msgs"></p-messages>
     </div>
     <p-footer>
-      <button pButton type="submit" label="Acceder" icon="fa-unlock" [disabled]="verificando"></button>
+      <button pButton type="submit" label="Acceder" icon="fa-unlock" [disabled]="verificando || form.invalid"></button>
     </p-footer>
   </p-dialog>
 </form>

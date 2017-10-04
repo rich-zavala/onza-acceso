@@ -1,9 +1,13 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, ViewEncapsulation } from '@angular/core';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 
+import { Message } from 'primeng/components/common/api';
+import { MessageService } from 'primeng/components/common/messageservice';
+
 @Component({
   selector: 'app-root',
+  encapsulation: ViewEncapsulation.None,
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
@@ -12,22 +16,15 @@ export class AppComponent {
   servidor = 'http://192.168.0.6/onza/acceso/';
   title = 'app';
   form: FormGroup;
-
   verificando = false;
-  clavesInvalidas = false;
-  accesoCorrecto = false;
-  error = false;
+  accesoConcedido = false;
+  msgs: Message[] = [];
 
-  usuario = {
-    nombre: '',
-    password: ''
-  };
-
-  constructor( @Inject(FormBuilder) fb: FormBuilder, private http: HttpClient) {
+  constructor( @Inject(FormBuilder) fb: FormBuilder, private http: HttpClient, private messageService: MessageService) {
     this.form = fb.group({
       'login': fb.group({
-        nombre: ['admin', [Validators.required, Validators.minLength(4)]],
-        password: ['admin', [Validators.required, Validators.minLength(4)]],
+        nombre: ['', [Validators.required, Validators.minLength(4)]],
+        password: ['', [Validators.required, Validators.minLength(4)]],
       })
     });
   }
@@ -38,35 +35,35 @@ export class AppComponent {
       this.form.disable();
       this.resetMessages();
       this.verificando = true;
-
-      setTimeout(() => {
-        this.http.post(this.servidor + 'login.html', this.form.value.login)
-          .subscribe(
-          (data: any) => {
-            this.resetMessages();
-            if (data.error === 0) {
-              this.accesoCorrecto = true;
-            } else {
-              this.clavesInvalidas = true;
-              this.form.enable();
-            }
-          },
-          () => {
-            this.error = true;
+      this.msgs.push({ severity: 'info', summary: 'Verificando claves de accesso...' });
+      this.http.post(this.servidor + 'login.html', this.form.value.login)
+        .subscribe(
+        (data: any) => {
+          this.resetMessages();
+          if (data.error === 0) {
+            this.msgs.push({ severity: 'success', summary: 'Accesso correcto' });
+          } else {
+            this.msgs.push({ severity: 'warn', summary: 'Las claves de acceso no son válidas' });
             this.form.enable();
-          },
-          () => {
-            setTimeout(() => this.resetMessages(), 2000);
           }
-          );
-      }, 2000);
+        },
+        () => {
+          this.msgs.push({ severity: 'error', summary: 'Ha ocurrido un error', detail: 'Intente de nuevo más tarde' });
+          this.form.enable();
+        },
+        () => this.goToSite());
     }
   }
 
   resetMessages() {
+    this.msgs = [];
     this.verificando = false;
-    this.clavesInvalidas = false;
-    this.accesoCorrecto = false;
-    this.error = false;
+  }
+
+  goToSite() {
+    setTimeout(() => {
+      this.accesoConcedido = true;
+      setTimeout(() => window.location.href = 'http://google.com', 800);
+    }, 1500);
   }
 }
