@@ -41,7 +41,7 @@ export class AppComponent {
         (data: any) => {
           this.resetMessages();
           if (data.error === 0) {
-            this.msgs.push({ severity: 'success', summary: 'Accesso correcto' });
+            this.acceder();
           } else {
             this.msgs.push({ severity: 'warn', summary: 'Las claves de acceso no son válidas' });
             this.form.enable();
@@ -50,8 +50,7 @@ export class AppComponent {
         () => {
           this.msgs.push({ severity: 'error', summary: 'Ha ocurrido un error', detail: 'Intente de nuevo más tarde' });
           this.form.enable();
-        },
-        () => this.goToSite());
+        });
     }
   }
 
@@ -60,7 +59,8 @@ export class AppComponent {
     this.verificando = false;
   }
 
-  goToSite() {
+  acceder() {
+    this.msgs.push({ severity: 'success', summary: 'Accesso correcto' });
     setTimeout(() => {
       this.accesoConcedido = true;
       setTimeout(() => window.location.href = 'http://google.com', 800);
